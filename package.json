@@ -2,7 +2,8 @@
   "name": "redux-min-shortcuts",
   "version": "1.0.0",
   "description": "Shortcuts for redux applications.",
-  "main": "lib/index.js",
+  "homepage": "https://github.com/MRoc/redux-min-shortcuts",
   "author": "Matthias Mayrock",
+  "main": "lib/index.js",
   "license": "MIT"
 }
