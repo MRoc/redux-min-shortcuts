@@ -12,7 +12,7 @@ npm install redux-min-shortcuts
 
 ## Example 1
 
-Example using hooks binding Undo/Redo to Ctrl+Z/Ctrl+Y for `redux-undo` package:
+Example using hooks binding Undo/Redo to Ctrl+Z/Ctrl+Y for `redux-undo` package. All required is to call `useGlobalShortcuts` with a list of shortcuts-to-action-creators array:
 
 ```
 import { useGlobalShortcuts } from "redux-min-shortcuts";
