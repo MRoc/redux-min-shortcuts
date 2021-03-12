@@ -5,5 +5,9 @@
   "homepage": "https://github.com/MRoc/redux-min-shortcuts",
   "author": "Matthias Mayrock",
   "main": "lib/index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "react": "^17.0.1",
+    "redux": "^4.0.5"
+  }
 }
