@@ -10,12 +10,12 @@ Passing the events to `handleShortcut` needs to be done by client code.
 npm install redux-min-shortcuts
 ```
 
-## Example
+## Example 1
 
-Example binding Undo/Redo to Ctrl+Z/Ctrl+Y for `redux-undo` package:
+Example using hooks binding Undo/Redo to Ctrl+Z/Ctrl+Y for `redux-undo` package:
 
 ```
-import { handleShortcut } from "redux-min-shortcuts";
+import { useGlobalShortcuts } from "redux-min-shortcuts";
 import { ActionCreators } from "redux-undo";
 
 const shortcutBindings = [
@@ -24,22 +24,40 @@ const shortcutBindings = [
 ];
 
 function App() {
-  const keydownListener = useCallback(
-    (event) => {
-      handleShortcut(event, undoShortcutBindings, dispatch);
-    },
-    [dispatch]
-  );
 
-  useEffect(() => {
-    window.addEventListener("keydown", keydownListener, true);
-    return () => window.removeEventListener("keydown", keydownListener, true);
-  }, [keydownListener]);
+  useGlobalShortcuts(shortcutBindings);
 
   return <div className="App" />;
 }
 
 export default App;
+```
+
+## Example 2
+
+Calling `handleShortcut` directly without registering global shortcuts is easy:
+
+```
+import { useDispatch } from "react-redux";
+import { handleShortcut } from "redux-min-shortcuts";
+
+function App() {
+
+  const shortcutBindings = [
+    { key: "z", modifiers: ["Control"], action: ActionCreators.undo },
+    { key: "y", modifiers: ["Control"], action: ActionCreators.redo },
+  ];
+
+  const dispatch = useDispatch();
+
+  const handleChildKeyDown = (event, myArgument) => {
+    handleShortcut(event, shortcutBindings, dispatch, myArgument);
+  };
+
+  return <div className="App" onChildKeyDown="handleChildKeyDown" />;
+}
+
+handleShortcut(event, nodesShortcutBindings, dispatch, node);
 ```
 
 ## Notes
