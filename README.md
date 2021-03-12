@@ -4,6 +4,11 @@ The package provides a small API for creating and dispatching redux actions trig
 
 Passing the events to `handleShortcut` needs to be done by client code.
 
+# Installation
+
+```
+npm install redux-min-shortcuts
+```
 
 ## Example
 
