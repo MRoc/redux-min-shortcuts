@@ -1,8 +1,6 @@
 # Shortcuts for Redux
 
-The package provides a small API for creating and dispatching redux actions triggered by shortcuts.
-
-Passing the events to `handleShortcut` needs to be done by client code.
+The package provides a small API for creating and dispatching redux actions triggered by keyboard shortcuts.
 
 # Installation
 
@@ -10,9 +8,9 @@ Passing the events to `handleShortcut` needs to be done by client code.
 npm install redux-min-shortcuts
 ```
 
-## Example 1
+## Example with react hooks
 
-Example using hooks binding Undo/Redo to Ctrl+Z/Ctrl+Y for `redux-undo` package. All required is to call `useGlobalShortcuts` with a list of shortcuts-to-action-creators array:
+Example using hooks binding Undo/Redo to Ctrl+Z/Ctrl+Y for `redux-undo` package. All required is to call `useGlobalShortcuts()` with a list of shortcuts-to-action-creators array:
 
 ```
 import { useGlobalShortcuts } from "redux-min-shortcuts";
@@ -33,9 +31,9 @@ function App() {
 export default App;
 ```
 
-## Example 2
+## Example without react hooks and custom arguments
 
-Calling `handleShortcut` directly without registering global shortcuts is easy:
+Calling `handleShortcut()` directly without registering global shortcuts is easy. This way, an argument can be passed down to the action creator:
 
 ```
 import { useDispatch } from "react-redux";
@@ -61,6 +59,40 @@ handleShortcut(event, nodesShortcutBindings, dispatch, node);
 ```
 
 ## Notes
+
+### Shortcut binding
+
+The shortcut binding consists out of a `key`, a collection of `modifiers`-keys, an function that can create an `action`:
+
+```
+{
+  key: "a",
+  modifiers: ["Control", "Shift"],
+  action: myActionCreator,
+}
+```
+
+An optional callback `isReady` can be specified to check if the shortcut binding is currently active or not. It will get called back everytime the user presses the keyboard shortcut. It get's passed the arguments that are passed into `handleShortcuts()`. If the binding is not ready, the event is not processed and neither `stopPropagation()` nor `preventDefault()` gets called:
+
+```
+{
+  key: "a",
+  modifiers: ["Control", "Shift"],
+  isReady: (myArgument) => myArgument.isReady
+  action: myActionCreator,
+}
+```
+
+An optional property is `passDefault` which prevents `preventDefault()` being called even even if the keyboard shortcut was detected and will be executed. This allows a shortcut to execute custom code but at the same time be handled by the browsers default implementation: 
+
+```
+{
+  key: "a",
+  modifiers: ["Control", "Shift"],
+  action: myActionCreator,
+  passDefault: true
+}
+```
 
 ### Precedence
 
