@@ -1,4 +1,7 @@
-import { handleShortcut } from "../lib/index.js";
+import { renderHook } from "@testing-library/react-hooks";
+import { Provider } from "react-redux";
+import React from "react";
+import { handleShortcut, useGlobalShortcuts } from "../lib/index.js";
 
 describe("Test handleShortcut", () => {
   test("With no shortcuts does nothing", () => {
@@ -160,5 +163,49 @@ describe("Test handleShortcut", () => {
     expect(shortcutBindings[0].isReady.mock.calls.length).toBe(1);
     expect(shortcutBindings[0].isReady.mock.calls[0][0]).toBe(arg);
     expect(dispatch.mock.calls.length).toBe(1);
+  });
+});
+
+describe("Test useGlobalShortcuts", () => {
+  describe("Call", () => {
+    const action = { type: "ACTION_TYPE" };
+
+    const shortcutBindings = [
+      {
+        key: "a",
+        modifiers: ["Control"],
+        action: jest.fn((_) => action),
+      },
+    ];
+
+    const event = {
+      key: "a",
+      getModifierState: jest.fn((_) => true),
+      stopPropagation: jest.fn(() => {}),
+      preventDefault: jest.fn(() => {}),
+    };
+
+    window.addEventListener = jest.fn();
+    window.removeEventListener = jest.fn();
+
+    const store = {
+      dispatch: jest.fn((a) => {}),
+      subscribe: jest.fn((a) => {}),
+      getState: jest.fn((a) => {}),
+    };
+
+    const wrapper = ({ children }) =>
+      React.createElement(Provider, { store: store }, children);
+
+    renderHook(() => useGlobalShortcuts(shortcutBindings), { wrapper });
+
+    expect(window.addEventListener.mock.calls.length).toBe(6);
+    expect(window.addEventListener.mock.calls[4][0]).toBe("keydown");
+
+    const callback = window.addEventListener.mock.calls[4][1];
+    callback(event);
+
+    expect(store.dispatch.mock.calls.length).toBe(1);
+    expect(store.dispatch.mock.calls[0][0]).toBe(action);
   });
 });
