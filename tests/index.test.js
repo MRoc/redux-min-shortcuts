@@ -1,7 +1,9 @@
-import { renderHook } from "@testing-library/react-hooks";
-import { Provider } from "react-redux";
-import React from "react";
-import { handleShortcut, useGlobalShortcuts } from "../lib/index.js";
+"use strict";
+
+const React = require("react");
+const Provider = require("react-redux").Provider;
+const { renderHook } = require("@testing-library/react-hooks");
+const { handleShortcut, useGlobalShortcuts } = require("../lib/index.js");
 
 describe("Test handleShortcut", () => {
   test("With no shortcuts does nothing", () => {
@@ -140,7 +142,7 @@ describe("Test handleShortcut", () => {
     expect(dispatch.mock.calls.length).toBe(0);
   });
   test("With shortcut matching and being ready does call dispatch", () => {
-      let x;
+    let x;
     const event = {
       key: "a",
       getModifierState: jest.fn((_) => true),
