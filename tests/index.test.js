@@ -142,7 +142,6 @@ describe("Test handleShortcut", () => {
     expect(dispatch.mock.calls.length).toBe(0);
   });
   test("With shortcut matching and being ready does call dispatch", () => {
-    let x;
     const event = {
       key: "a",
       getModifierState: jest.fn((_) => true),
