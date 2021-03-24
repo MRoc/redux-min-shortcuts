@@ -94,17 +94,6 @@ An optional property is `passDefault` which prevents `preventDefault()` being ca
 }
 ```
 
-### Precedence
-
-The shortcuts need to be provided in order of precedence which means if you want to support `Ctrl+A` and `Ctrl+Shift+A`, the second needs to be before the first in the array:
-
-```
-const shortcutBindings = [
-  { key: "a", modifiers: ["Control", "Shift"], action: myActionCreator },
-  { key: "a", modifiers: ["Control"], action: myActionCreator },
-];
-```
-
 ### Propagation (stopPropagation)
 
 If a event is handled, `event.stopPropagation()` is always called.
