@@ -54,8 +54,6 @@ function App() {
 
   return <div className="App" onChildKeyDown="handleChildKeyDown" />;
 }
-
-handleShortcut(event, nodesShortcutBindings, dispatch, node);
 ```
 
 ## Notes
