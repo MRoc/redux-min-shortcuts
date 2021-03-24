@@ -60,7 +60,7 @@ describe("Test handleShortcut", () => {
     const shortcutBindings = [
       { key: "a", modifiers: ["Control"], action: jest.fn(() => () => {}) },
     ];
-    const dispatch = jest.fn((_) => {});
+    const dispatch = jest.fn(() => {});
 
     handleShortcut(event, shortcutBindings, dispatch);
 
@@ -79,7 +79,7 @@ describe("Test handleShortcut", () => {
         passDefault: true,
       },
     ];
-    const dispatch = jest.fn((_) => {});
+    const dispatch = jest.fn(() => {});
 
     handleShortcut(event, shortcutBindings, dispatch);
 
@@ -97,7 +97,7 @@ describe("Test handleShortcut", () => {
         action: jest.fn((arg) => () => {}),
       },
     ];
-    const dispatch = jest.fn((_) => {});
+    const dispatch = jest.fn(() => {});
     const arg = { a: "b" };
 
     handleShortcut(event, shortcutBindings, dispatch, arg);
@@ -112,28 +112,28 @@ describe("Test handleShortcut", () => {
       {
         key: "a",
         modifiers: ["Control"],
-        action: jest.fn((_) => () => {}),
-        isReady: jest.fn((_) => false),
+        action: jest.fn(() => () => {}),
+        isReady: jest.fn(() => false),
       },
     ];
-    const dispatch = jest.fn((_) => {});
+    const dispatch = jest.fn(() => {});
     const arg = { a: "b" };
 
     handleShortcut(event, shortcutBindings, dispatch, arg);
 
     expect(shortcutBindings[0].isReady.mock.calls.length).toBe(1);
-    expect(shortcutBindings[0].isReady.mock.calls[0][0]).toBe(arg);
+    expect(shortcutBindings[0].isReady.mock.calls[0]).toEqual([event, arg]);
     expect(dispatch.mock.calls.length).toBe(0);
   });
   test("With shortcut matching and being ready does call dispatch", () => {
     const event = createEvent("a", ["Control"]);
-    const dispatch = jest.fn((_) => {});
+    const dispatch = jest.fn(() => {});
     const shortcutBindings = [
       {
         key: "a",
         modifiers: ["Control"],
-        action: jest.fn((_) => () => {}),
-        isReady: jest.fn((_) => true),
+        action: jest.fn(() => () => {}),
+        isReady: jest.fn(() => true),
       },
     ];
     const arg = { a: "b" };
@@ -141,7 +141,7 @@ describe("Test handleShortcut", () => {
     handleShortcut(event, shortcutBindings, dispatch, arg);
 
     expect(shortcutBindings[0].isReady.mock.calls.length).toBe(1);
-    expect(shortcutBindings[0].isReady.mock.calls[0][0]).toBe(arg);
+    expect(shortcutBindings[0].isReady.mock.calls[0]).toEqual([event, arg]);
     expect(dispatch.mock.calls.length).toBe(1);
   });
 });
@@ -151,7 +151,7 @@ describe("Test useGlobalShortcuts", () => {
     const action = { type: "ACTION_TYPE" };
     const event = createEvent("a", ["Control"]);
     const shortcutBindings = [
-      { key: "a", modifiers: ["Control"], action: jest.fn((_) => action) },
+      { key: "a", modifiers: ["Control"], action: jest.fn(() => action) },
     ];
 
     window.addEventListener = jest.fn();

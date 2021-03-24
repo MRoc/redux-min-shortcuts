@@ -70,13 +70,13 @@ The shortcut binding consists out of a `key`, a collection of `modifiers`-keys, 
 }
 ```
 
-An optional callback `isReady` can be specified to check if the shortcut binding is currently active or not. It will get called back everytime the user presses the keyboard shortcut. It get's passed the arguments that are passed into `handleShortcuts()`. If the binding is not ready, the event is not processed and neither `stopPropagation()` nor `preventDefault()` gets called:
+An optional callback `isReady` can be specified to check if the shortcut binding is currently active or not. It will get called back everytime the user presses the keyboard shortcut. It get's passed the arguments `event` and `arg` that are passed into `handleShortcuts()`. If the binding is not ready, the event is not processed and neither `stopPropagation()` nor `preventDefault()` gets called:
 
 ```
 {
   key: "a",
   modifiers: ["Control", "Shift"],
-  isReady: (myArgument) => myArgument.isReady
+  isReady: (event, arg) => arg.isReady
   action: myActionCreator,
 }
 ```
