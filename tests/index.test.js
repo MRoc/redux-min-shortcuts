@@ -67,6 +67,28 @@ describe("Test handleShortcut", () => {
 
     expect(dispatch.mock.calls.length).toBe(0);
   });
+  test("With less modifiers pressed does nothing", () => {
+    const pressedModifiers = ["Control"];
+    const event = {
+      key: "a",
+      getModifierState: jest.fn((modifier) =>
+        pressedModifiers.includes(modifier)
+      ),
+      stopPropagation: jest.fn(() => {}),
+      preventDefault: jest.fn(() => {}),
+    };
+    const dispatch = jest.fn(() => {});
+    const shortcutBindings = [
+      {
+        key: "a",
+        modifiers: ["Control", "Shift"],
+      },
+    ];
+
+    handleShortcut(event, shortcutBindings, dispatch);
+
+    expect(dispatch.mock.calls.length).toBe(0);
+  });
   test("With shortcut matching event calls dispatch", () => {
     const event = {
       key: "a",
