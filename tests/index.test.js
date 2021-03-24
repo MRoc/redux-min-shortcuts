@@ -5,122 +5,72 @@ const Provider = require("react-redux").Provider;
 const { renderHook } = require("@testing-library/react-hooks");
 const { handleShortcut, useGlobalShortcuts } = require("../lib/index.js");
 
+function createEvent(key, modifiers) {
+  return {
+    key: key,
+    getModifierState: jest.fn((modifier) => modifiers.includes(modifier)),
+    stopPropagation: jest.fn(() => {}),
+    preventDefault: jest.fn(() => {}),
+  };
+}
+
 describe("Test handleShortcut", () => {
   test("With no shortcuts does nothing", () => {
-    const event = {
-      key: "a",
-      getModifierState: jest.fn((_) => true),
-      stopPropagation: jest.fn(() => {}),
-      preventDefault: jest.fn(() => {}),
-    };
-    const dispatch = jest.fn(() => {});
+    const event = createEvent("a", []);
     const shortcutBindings = [];
+    const dispatch = jest.fn(() => {});
 
     handleShortcut(event, shortcutBindings, dispatch);
 
-    expect(event.getModifierState.mock.calls.length).toBe(3);
     expect(event.stopPropagation.mock.calls.length).toBe(0);
     expect(event.preventDefault.mock.calls.length).toBe(0);
     expect(dispatch.mock.calls.length).toBe(0);
   });
-  test("With shortcut not matching event does nothing", () => {
-    const event = {
-      key: "a",
-      getModifierState: jest.fn((_) => true),
-      stopPropagation: jest.fn(() => {}),
-      preventDefault: jest.fn(() => {}),
-    };
+  test("With key not matching event does nothing", () => {
+    const event = createEvent("a", []);
+    const shortcutBindings = [{ key: "b", modifiers: ["Control"] }];
     const dispatch = jest.fn(() => {});
-    const shortcutBindings = [
-      {
-        key: "b",
-        modifiers: ["Control"],
-      },
-    ];
 
     handleShortcut(event, shortcutBindings, dispatch);
 
-    expect(event.getModifierState.mock.calls.length).toBe(3);
     expect(event.stopPropagation.mock.calls.length).toBe(0);
     expect(event.preventDefault.mock.calls.length).toBe(0);
     expect(dispatch.mock.calls.length).toBe(0);
   });
-  test("With more modifiers pressed does nothing", () => {
-    const pressedModifiers = ["Control", "Shift"];
-    const event = {
-      key: "a",
-      getModifierState: jest.fn((modifier) =>
-        pressedModifiers.includes(modifier)
-      ),
-      stopPropagation: jest.fn(() => {}),
-      preventDefault: jest.fn(() => {}),
-    };
+  test("With too many modifiers pressed does nothing", () => {
+    const event = createEvent("a", ["Control", "Shift"]);
+    const shortcutBindings = [{ key: "a", modifiers: ["Control"] }];
     const dispatch = jest.fn(() => {});
-    const shortcutBindings = [
-      {
-        key: "a",
-        modifiers: ["Control"],
-      },
-    ];
 
     handleShortcut(event, shortcutBindings, dispatch);
 
     expect(dispatch.mock.calls.length).toBe(0);
   });
-  test("With less modifiers pressed does nothing", () => {
-    const pressedModifiers = ["Control"];
-    const event = {
-      key: "a",
-      getModifierState: jest.fn((modifier) =>
-        pressedModifiers.includes(modifier)
-      ),
-      stopPropagation: jest.fn(() => {}),
-      preventDefault: jest.fn(() => {}),
-    };
+  test("With too few modifiers pressed does nothing", () => {
+    const event = createEvent("a", ["Control"]);
+    const shortcutBindings = [{ key: "a", modifiers: ["Control", "Shift"] }];
     const dispatch = jest.fn(() => {});
-    const shortcutBindings = [
-      {
-        key: "a",
-        modifiers: ["Control", "Shift"],
-      },
-    ];
 
     handleShortcut(event, shortcutBindings, dispatch);
 
     expect(dispatch.mock.calls.length).toBe(0);
   });
   test("With shortcut matching event calls dispatch", () => {
-    const event = {
-      key: "a",
-      getModifierState: jest.fn((modifier) => modifier === "Control"),
-      stopPropagation: jest.fn(() => {}),
-      preventDefault: jest.fn(() => {}),
-    };
-    const dispatch = jest.fn((_) => {});
+    const event = createEvent("a", ["Control"]);
     const shortcutBindings = [
-      {
-        key: "a",
-        modifiers: ["Control"],
-        action: jest.fn(() => () => {}),
-      },
+      { key: "a", modifiers: ["Control"], action: jest.fn(() => () => {}) },
     ];
+    const dispatch = jest.fn((_) => {});
 
     handleShortcut(event, shortcutBindings, dispatch);
 
-    expect(event.getModifierState.mock.calls.length).toBe(3);
     expect(event.stopPropagation.mock.calls.length).toBe(1);
     expect(event.preventDefault.mock.calls.length).toBe(1);
     expect(shortcutBindings[0].action.mock.calls.length).toBe(1);
     expect(dispatch.mock.calls.length).toBe(1);
   });
   test("With shortcut matching event and passDefault does not call preventDefault", () => {
-    const event = {
-      key: "a",
-      getModifierState: jest.fn((modifier) => modifier === "Control"),
-      stopPropagation: jest.fn(() => {}),
-      preventDefault: jest.fn(() => {}),
-    };
-    const dispatch = jest.fn((_) => {});
+    const event = createEvent("a", ["Control"]);
     const shortcutBindings = [
       {
         key: "a",
@@ -129,23 +79,17 @@ describe("Test handleShortcut", () => {
         passDefault: true,
       },
     ];
+    const dispatch = jest.fn((_) => {});
 
     handleShortcut(event, shortcutBindings, dispatch);
 
-    expect(event.getModifierState.mock.calls.length).toBe(3);
     expect(event.stopPropagation.mock.calls.length).toBe(1);
     expect(event.preventDefault.mock.calls.length).toBe(0);
     expect(shortcutBindings[0].action.mock.calls.length).toBe(1);
     expect(dispatch.mock.calls.length).toBe(1);
   });
   test("With shortcut matching event and arguments passes to action creator", () => {
-    const event = {
-      key: "a",
-      getModifierState: jest.fn((modifier) => modifier === "Control"),
-      stopPropagation: jest.fn(() => {}),
-      preventDefault: jest.fn(() => {}),
-    };
-    const dispatch = jest.fn((_) => {});
+    const event = createEvent("a", ["Control"]);
     const shortcutBindings = [
       {
         key: "a",
@@ -153,6 +97,7 @@ describe("Test handleShortcut", () => {
         action: jest.fn((arg) => () => {}),
       },
     ];
+    const dispatch = jest.fn((_) => {});
     const arg = { a: "b" };
 
     handleShortcut(event, shortcutBindings, dispatch, arg);
@@ -162,13 +107,7 @@ describe("Test handleShortcut", () => {
     expect(dispatch.mock.calls.length).toBe(1);
   });
   test("With shortcut matching but not being ready does not call dispatch", () => {
-    const event = {
-      key: "a",
-      getModifierState: jest.fn((modifier) => modifier === "Control"),
-      stopPropagation: jest.fn(() => {}),
-      preventDefault: jest.fn(() => {}),
-    };
-    const dispatch = jest.fn((_) => {});
+    const event = createEvent("a", ["Control"]);
     const shortcutBindings = [
       {
         key: "a",
@@ -177,6 +116,7 @@ describe("Test handleShortcut", () => {
         isReady: jest.fn((_) => false),
       },
     ];
+    const dispatch = jest.fn((_) => {});
     const arg = { a: "b" };
 
     handleShortcut(event, shortcutBindings, dispatch, arg);
@@ -186,12 +126,7 @@ describe("Test handleShortcut", () => {
     expect(dispatch.mock.calls.length).toBe(0);
   });
   test("With shortcut matching and being ready does call dispatch", () => {
-    const event = {
-      key: "a",
-      getModifierState: jest.fn((modifier) => modifier === "Control"),
-      stopPropagation: jest.fn(() => {}),
-      preventDefault: jest.fn(() => {}),
-    };
+    const event = createEvent("a", ["Control"]);
     const dispatch = jest.fn((_) => {});
     const shortcutBindings = [
       {
@@ -214,21 +149,10 @@ describe("Test handleShortcut", () => {
 describe("Test useGlobalShortcuts", () => {
   describe("Call", () => {
     const action = { type: "ACTION_TYPE" };
-
+    const event = createEvent("a", ["Control"]);
     const shortcutBindings = [
-      {
-        key: "a",
-        modifiers: ["Control"],
-        action: jest.fn((_) => action),
-      },
+      { key: "a", modifiers: ["Control"], action: jest.fn((_) => action) },
     ];
-
-    const event = {
-      key: "a",
-      getModifierState: jest.fn((modifier) => modifier === "Control"),
-      stopPropagation: jest.fn(() => {}),
-      preventDefault: jest.fn(() => {}),
-    };
 
     window.addEventListener = jest.fn();
     window.removeEventListener = jest.fn();
