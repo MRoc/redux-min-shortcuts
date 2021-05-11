@@ -168,7 +168,7 @@ describe("Test useGlobalShortcuts", () => {
 
     renderHook(() => useGlobalShortcuts(bindings), { wrapper });
 
-    expect(window.addEventListener.mock.calls.length).toBe(6);
+    expect(window.addEventListener.mock.calls.length).toBe(5);
     expect(window.addEventListener.mock.calls[4][0]).toBe("keydown");
 
     const callback = window.addEventListener.mock.calls[4][1];
