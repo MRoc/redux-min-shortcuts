@@ -2,12 +2,12 @@
 
 const React = require("react");
 const Provider = require("react-redux").Provider;
-const { renderHook } = require("@testing-library/react-hooks");
+const { renderHook } = require("@testing-library/react");
 const { handleShortcut, useGlobalShortcuts } = require("../lib/index.js");
 
 function createEvent(key, modifiers) {
   return {
-    key: key,
+    key,
     getModifierState: jest.fn((modifier) => modifiers.includes(modifier)),
     stopPropagation: jest.fn(() => {}),
     preventDefault: jest.fn(() => {}),
@@ -164,14 +164,14 @@ describe("Test useGlobalShortcuts", () => {
     };
 
     const wrapper = ({ children }) =>
-      React.createElement(Provider, { store: store }, children);
+      React.createElement(Provider, { store }, children);
 
     renderHook(() => useGlobalShortcuts(bindings), { wrapper });
 
-    expect(window.addEventListener.mock.calls.length).toBe(5);
-    expect(window.addEventListener.mock.calls[4][0]).toBe("keydown");
+    expect(window.addEventListener.mock.calls.length).toBe(1);
+    expect(window.addEventListener.mock.calls[0][0]).toBe("keydown");
 
-    const callback = window.addEventListener.mock.calls[4][1];
+    const callback = window.addEventListener.mock.calls[0][1];
     callback(event);
 
     expect(store.dispatch.mock.calls.length).toBe(1);
