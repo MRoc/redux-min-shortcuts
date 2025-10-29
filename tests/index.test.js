@@ -94,7 +94,7 @@ describe("Test handleShortcut", () => {
       {
         key: "a",
         modifiers: ["Control"],
-        action: jest.fn((arg) => () => {}),
+        action: jest.fn((_arg) => () => {}),
       },
     ];
     const dispatch = jest.fn(() => {});
@@ -158,9 +158,9 @@ describe("Test useGlobalShortcuts", () => {
     window.removeEventListener = jest.fn();
 
     const store = {
-      dispatch: jest.fn((a) => {}),
-      subscribe: jest.fn((a) => {}),
-      getState: jest.fn((a) => {}),
+      dispatch: jest.fn((_a) => {}),
+      subscribe: jest.fn((_a) => {}),
+      getState: jest.fn((_a) => {}),
     };
 
     const wrapper = ({ children }) =>
